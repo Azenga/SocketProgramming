@@ -1,8 +1,6 @@
 package com.anonymous;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class SampleClient {
@@ -21,12 +19,28 @@ public class SampleClient {
             System.out.println("Just connected");
 
             //Writing Message to the server
-            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            outputStream.writeUTF(String.format("Hello %s, I need something", socket.getLocalSocketAddress()));
+            PrintWriter out = new PrintWriter(
+                    new BufferedWriter(
+                            new OutputStreamWriter(
+                                    new DataOutputStream(socket.getOutputStream())
+                            )
+                    )
+            );
+
+            out.write(String.format("Hello %s, I need something\n", socket.getLocalSocketAddress()));
+            out.flush();
 
             //Reading servers message
-            DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-            System.out.printf("Server says, %s \n", inputStream.readUTF());
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new DataInputStream(socket.getInputStream())
+                    )
+            );
+
+            System.out.println("Server Says,");
+
+            System.out.println(in.readLine());
+
 
         } catch (IOException exception) {
 

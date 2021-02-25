@@ -1,8 +1,6 @@
 package com.anonymous;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -21,11 +19,26 @@ public class SampleServer {
 
             System.out.printf("Just Connected to %s\n", serverSocket.getRemoteSocketAddress());
 
-            DataInputStream inputStream = new DataInputStream(serverSocket.getInputStream());
-            System.out.printf("Client Says, \n \"%s\"", inputStream.readUTF());
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new DataInputStream(serverSocket.getInputStream())
+                    )
+            );
 
-            DataOutputStream outputStream = new DataOutputStream(serverSocket.getOutputStream());
-            outputStream.writeUTF(String.format("Hello, thank you for connecting to %s, what exactly do you want?", serverSocket.getLocalSocketAddress()));
+            System.out.println("Client Says,");
+
+            System.out.println(in.readLine());
+
+            PrintWriter out = new PrintWriter(
+                    new BufferedWriter(
+                            new OutputStreamWriter(
+                                    new DataOutputStream(serverSocket.getOutputStream())
+                            )
+                    )
+            );
+
+            out.write(String.format("Hello, thank you for connecting to %s, what exactly do you want?", serverSocket.getLocalSocketAddress()));
+            out.flush();
 
             serverSocket.close();
 
